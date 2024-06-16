@@ -65,8 +65,8 @@
         function render() {
             /* Uncomment this if you want to animate the cubes */
             for (let i = 0; i < cubes.length; i++) {
-                cubes[i].rotation.x -= 0.01;
-                cubes[i].rotation.y -= 0.01;
+                cubes[i].position.x -= 0.01;
+                cubes[i].position.y -= 0.01;
             }
             renderer.render(scene, camera);
         }
