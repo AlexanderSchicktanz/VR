@@ -43,12 +43,23 @@
             cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
 
-            // Controller
-            controller = renderer.xr.getController(0);
-            scene.add(controller);
-
             // Handle window resize
             window.addEventListener('resize', onWindowResize, false);
+
+            // Handle VR session start and end
+            renderer.xr.addEventListener('sessionstart', onSessionStart);
+            renderer.xr.addEventListener('sessionend', onSessionEnd);
+        }
+
+        function onSessionStart() {
+            const session = renderer.xr.getSession();
+            session.requestReferenceSpace('local').then((referenceSpace) => {
+                renderer.xr.setReferenceSpace(referenceSpace);
+            });
+        }
+
+        function onSessionEnd() {
+            // Clean up when the session ends
         }
 
         function onWindowResize() {
@@ -62,9 +73,7 @@
         }
 
         function render() {
-            const delta = 0.05;
-
-            // Get the current position of the headset
+            // Update headset position
             const session = renderer.xr.getSession();
             if (session) {
                 const referenceSpace = renderer.xr.getReferenceSpace();
@@ -74,9 +83,9 @@
                     userPosition.set(transform.position.x, transform.position.y, transform.position.z);
 
                     // Apply movement based on headset position
-                    camera.position.x += (userPosition.x - camera.position.x) * delta;
-                    camera.position.y += (userPosition.y - camera.position.y) * delta;
-                    camera.position.z += (userPosition.z - camera.position.z) * delta;
+                    camera.position.x = userPosition.x;
+                    camera.position.y = userPosition.y;
+                    camera.position.z = userPosition.z;
                 }
             }
 
