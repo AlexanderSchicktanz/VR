@@ -42,6 +42,8 @@
             for (let i = 0; i < 10; i++) {
                 let cube = new THREE.Mesh(geometry, material);
                 cube.position.x = -5 + i;
+                cube.position.y = 20+Math.random()*10;
+                cube.position.z = -5+Math.random()*10;
                 scene.add(cube);
                 cubes.push(cube);
             }
@@ -62,10 +64,10 @@
 
         function render() {
             /* Uncomment this if you want to animate the cubes */
-            // for (let i = 0; i < cubes.length; i++) {
-            //     cubes[i].rotation.x += 0.01;
-            //     cubes[i].rotation.y += 0.01;
-            // }
+            for (let i = 0; i < cubes.length; i++) {
+                cubes[i].rotation.x -= 0.01;
+                cubes[i].rotation.y -= 0.01;
+            }
             renderer.render(scene, camera);
         }
     </script>
