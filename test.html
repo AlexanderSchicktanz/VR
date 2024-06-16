@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three.js WebXR Example with Pass-Through</title>
+    <title>Three.js WebXR Example</title>
     <style>
         body { margin: 0; }
         canvas { display: block; }
@@ -13,9 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="./VRButton.js"></script>
     <script>
-        let scene, camera, renderer, cube;
-        let controller1, controller2;
-        let headsetPose;
+        let scene, camera, renderer, cubes;
 
         init();
         animate();
@@ -40,38 +38,14 @@
             // Cube
             const geometry = new THREE.BoxGeometry();
             const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            cube = new THREE.Mesh(geometry, material);
-            scene.add(cube);
+            for(let i = 0; i < 10; i++){
+                cubes[i] = new THREE.Mesh(geometry, material);
+                cubes[i].position.x=-5+i;
+                scene.add(cubes[i]);
+            }
 
             // Handle window resize
             window.addEventListener('resize', onWindowResize, false);
-
-            // Add VR Controllers
-            controller1 = renderer.xr.getController(0);
-            controller1.addEventListener('selectstart', onSelectStart);
-            controller1.addEventListener('selectend', onSelectEnd);
-            scene.add(controller1);
-
-            controller2 = renderer.xr.getController(1);
-            controller2.addEventListener('selectstart', onSelectStart);
-            controller2.addEventListener('selectend', onSelectEnd);
-            scene.add(controller2);
-
-            // Enable pass-through (AR mode)
-            navigator.xr.requestSession('immersive-ar', {
-                optionalFeatures: ['dom-overlay'],
-                domOverlay: { root: document.body }
-            }).then((session) => {
-                renderer.xr.setSession(session);
-            }).catch(console.error);
-        }
-
-        function onSelectStart(event) {
-            // Handle controller select start
-        }
-
-        function onSelectEnd(event) {
-            // Handle controller select end
         }
 
         function onWindowResize() {
@@ -85,29 +59,11 @@
         }
 
         function render() {
-            // Access headset pose
-            const session = renderer.xr.getSession();
-            if (session) {
-                const referenceSpace = renderer.xr.getReferenceSpace();
-                const pose = session.getViewerPose(referenceSpace);
-                if (pose) {
-                    headsetPose = pose.transform;
-                    console.log('Headset Position:', headsetPose.position);
-                    console.log('Headset Orientation:', headsetPose.orientation);
-                }
-
-                // Access controllers
-                const inputSources = session.inputSources;
-                inputSources.forEach((inputSource) => {
-                    if (inputSource.targetRayMode === 'tracked-pointer' && inputSource.gamepad) {
-                        console.log('Controller Position:', inputSource.targetRaySpace);
-                        console.log('Controller Orientation:', inputSource.targetRaySpace);
-                    }
-                });
+            /*cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;*/
+            for(let i = 0; i < 10; i++){
+                cubes[i].position.y += 0.01;
             }
-
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
             renderer.render(scene, camera);
         }
     </script>
